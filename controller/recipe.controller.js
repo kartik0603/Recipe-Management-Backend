@@ -1,6 +1,6 @@
 const Recipe = require("../model/recipe.schema.js");
 
-// Create a new recipe
+// Create recipe
 const createRecipe = async (req, res) => {
   try {
     const { title, ingredients, instructions, cuisineType } = req.body;
@@ -27,7 +27,7 @@ const createRecipe = async (req, res) => {
   }
 };
 
-// Get all recipes
+// all recipes
 const getAllRecipes = async (req, res) => {
   try {
     

@@ -1,4 +1,5 @@
 const User = require("../model/user.schema.js");
+const { hashPassword, comparePassword } = require("../secure/hashPassword.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
@@ -6,12 +7,11 @@ require("dotenv").config();
 
 
 
-// User Registration
 const register = async (req, res) => {
   const { name, email, password, role } = req.body;
 
-  // Basic validation
-  if (!email || !password || !username || !nationality || !role) {
+ 
+  if (!email || !password || !name || !role || ) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -21,16 +21,16 @@ const register = async (req, res) => {
   }
 
   try {
-    // Check if user already exists
+    
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Hash the password before saving
+
     const hashedPassword = await hashPassword(password);
 
-    // Create the user
+ 
     const user = await User.create({
       name,
       email,
@@ -83,7 +83,7 @@ const login = async (req, res) => {
   }
 };
 
-// Forget Password
+
 const forgetPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -181,7 +181,6 @@ const resetPassword = async (req, res) => {
       .send({ message: "Something went wrong", error: error.message });
   }
 };
-
 
 
 
