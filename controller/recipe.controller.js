@@ -6,7 +6,7 @@ const createRecipe = async (req, res) => {
     const { title, ingredients, instructions, cuisineType, image } = req.body;
 
 
-    if (!title || !ingredients || !instructions || !cuisineType, !image) {
+    if (!title || !ingredients || !instructions || !cuisineType || !image) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
