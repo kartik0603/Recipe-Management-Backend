@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
     },
     nationality: {
       type: String,
-      required: true,
+     
     },
     role: {
       type: String,
