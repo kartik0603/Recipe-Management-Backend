@@ -3,10 +3,10 @@ const Recipe = require("../model/recipe.schema.js");
 // Create recipe
 const createRecipe = async (req, res) => {
   try {
-    const { title, ingredients, instructions, cuisineType } = req.body;
+    const { title, ingredients, instructions, cuisineType, image } = req.body;
 
 
-    if (!title || !ingredients || !instructions || !cuisineType) {
+    if (!title || !ingredients || !instructions || !cuisineType, !image) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
