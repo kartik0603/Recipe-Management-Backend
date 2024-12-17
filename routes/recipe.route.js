@@ -24,12 +24,12 @@ recipeRouter.use(protect);
 
 
 recipeRouter.get("/all", roleCheck(["user", "admin"]), getAllRecipes);
-recipeRouter.get("/details/:id", roleCheck(["user", "admin"]), uploader.single("image"), getRecipeDetails);
+recipeRouter.get("/details/:id", roleCheck(["user", "admin"]), getRecipeDetails);
 recipeRouter.post("/create", roleCheck(["user", "admin"]), uploader.single("image"), createRecipe);
 recipeRouter.patch("/update/:id", roleCheck(["user", "admin"]), uploader.single("image"), updateRecipe);
 recipeRouter.delete("/delete/:id", roleCheck(["user", "admin"]), deleteRecipe);
 recipeRouter.get("/search", roleCheck(["user", "admin"]), searchRecipes);
-recipeRouter.post("/upload", roleCheck(["user", "admin"]), uploader.single("image"), createRecipe);
+
 recipeRouter.put("/img-update/:id", roleCheck(["user", "admin"]), uploader.single("image"), updateRecipe);
 
 
