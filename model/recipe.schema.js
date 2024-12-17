@@ -16,6 +16,7 @@ const recipeSchema = new mongoose.Schema(
         "Chinese",
         "Mexican",
         "American",
+        "Italian",
       ],
       required: true,
     },
