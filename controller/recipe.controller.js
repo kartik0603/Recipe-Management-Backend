@@ -13,6 +13,7 @@ const createRecipe = async (req, res) => {
     const recipeData = {
       title,
       ingredients: ingredients.split(","), 
+      instructions,
       cuisineType,
       image: req.file ? req.file.path : null,
       createdBy: req.user.id, 
