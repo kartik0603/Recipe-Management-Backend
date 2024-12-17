@@ -153,6 +153,7 @@ const resetPassword = async (req, res) => {
   const { password } = req.body;
 
   if (!password) {
+    console.log("Please provide password", password);
     return res.status(400).send({ message: "Please provide password" });
   }
 
