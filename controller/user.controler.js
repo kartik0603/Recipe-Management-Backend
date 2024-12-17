@@ -8,7 +8,7 @@ require("dotenv").config();
 
 
 const register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role , nationality} = req.body;
 
  
   if (!email || !password || !name || !  nationality || !role  ) {
