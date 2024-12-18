@@ -167,6 +167,7 @@ const searchRecipes = async (req, res) => {
   const { cuisineType } = req.query;
 
   try {
+    
     if (!cuisineType) {
       return res.status(400).json({
         message: "Please provide a cuisine type to search for recipes.",
@@ -175,18 +176,24 @@ const searchRecipes = async (req, res) => {
 
     
     const recipes = await Recipe.find({
-      cuisineType: { $regex: new RegExp(cuisineType, "i") },
+      cuisineType: { $regex: new RegExp(`^${cuisineType}$`, "i") }, // 
     }).populate("createdBy", "username email");
 
+    
     if (recipes.length === 0) {
-      return res.status(404).json({ message: "No recipes found for the specified cuisine type." });
+      return res.status(404).json({
+        message: `No recipes found for the cuisine type "${cuisineType}".`,
+      });
     }
 
+    
     res.status(200).json({ recipes });
   } catch (error) {
+    console.error("Error searching recipes:", error.message);
     res.status(500).json({ message: "Error searching recipes", error: error.message });
   }
 };
+
 
 module.exports = {
   createRecipe,
