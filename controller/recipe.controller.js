@@ -1,4 +1,5 @@
 const Recipe = require("../model/recipe.schema.js");
+const mongoose = require("mongoose");
 
 // Create recipe
 const createRecipe = async (req, res) => {
@@ -9,7 +10,7 @@ const createRecipe = async (req, res) => {
       return res.status(400).json({ message: "All fields are required except image" });
     }
 
-    const image = req.file ? `/uploads/${req.file.filename}` : req.body.image || null;
+    // const image = req.file ? `/uploads/${req.file.filename}` : req.body.image || null;
 
     const recipeData = {
       title,
@@ -19,6 +20,13 @@ const createRecipe = async (req, res) => {
       image,
       createdBy: req.user.id,
     };
+
+    if (req.file) {
+      recipeData.image = {
+        data: req.file.buffer, // Store image  BInary data
+        contentType: req.file.mimetype, // Store MIME type
+      };
+    }
 
     const recipe = await Recipe.create(recipeData);
 
@@ -32,21 +40,27 @@ const createRecipe = async (req, res) => {
 // all recipes
 const getAllRecipes = async (req, res) => {
   try {
-    
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1); 
+    const limit = Math.max(parseInt(req.query.limit, 10) || 10, 1); 
 
+    const totalRecipes = await Recipe.countDocuments(); 
     const recipes = await Recipe.find()
       .populate("createdBy", "username email") 
-      .skip((page - 1) * limit)
-      .limit(limit);
+      .sort({ createdAt: -1 }) 
+      .skip((page - 1) * limit) 
+      .limit(limit); 
 
-    
-    return res.status(200).json({ recipes });
+    return res.status(200).json({
+      recipes,
+      currentPage: page,
+      totalPages: Math.ceil(totalRecipes / limit),
+      totalRecipes,
+    });
   } catch (error) {
     res.status(500).json({ message: "Error fetching recipes", error: error.message });
   }
 };
+
 
 const updateRecipe = async (req, res) => {
   const { id } = req.params;
@@ -91,8 +105,13 @@ const updateRecipe = async (req, res) => {
 };
 
 // Get recipe  ID
+
 const getRecipeDetails = async (req, res) => {
   const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid recipe ID" });
+  }
 
   try {
     const recipe = await Recipe.findById(id).populate("createdBy", "username email");
@@ -101,12 +120,19 @@ const getRecipeDetails = async (req, res) => {
       return res.status(404).json({ message: "Recipe not found" });
     }
 
-  
-    res.status(200).json({ recipe });
+    const recipeWithImage = {
+      ...recipe._doc,
+      image: recipe.image
+        ? `data:${recipe.image.contentType};base64,${recipe.image.data.toString("base64")}`
+        : null,
+    };
+
+    res.status(200).json({ recipe: recipeWithImage });
   } catch (error) {
     return res.status(500).json({ message: "Error fetching recipe details", error: error.message });
   }
 };
+
 
 const deleteRecipe = async (req, res) => {
   const { id } = req.params;

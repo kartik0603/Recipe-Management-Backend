@@ -4,7 +4,10 @@ const recipeSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     ingredients: { type: [String], required: true },
-    image: { type: String },
+    image: {
+      data: Buffer, // Binary data OF image
+      contentType: String, // MIME type image
+    },
     instructions: { type: String, required: true },
     cuisineType: {
       type: String,
