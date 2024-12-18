@@ -10,14 +10,14 @@ const createRecipe = async (req, res) => {
       return res.status(400).json({ message: "All fields are required except image" });
     }
 
-    // const image = req.file ? `/uploads/${req.file.filename}` : req.body.image || null;
+    
 
     const recipeData = {
       title,
       ingredients: ingredients.split(",").map((item) => item.trim()), 
       instructions,
       cuisineType,
-      image,
+   
       createdBy: req.user.id,
     };
 
