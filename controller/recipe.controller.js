@@ -66,15 +66,17 @@ const updateRecipe = async (req, res) => {
   const { id } = req.params;
 
   try {
-    
+  
     const recipe = await Recipe.findOne({ _id: id, createdBy: req.user.id });
     if (!recipe) {
       return res.status(403).json({ message: "You are not authorized to update this recipe" });
     }
 
+    
     const allowedUpdates = ["title", "ingredients", "instructions", "cuisineType", "image"];
     const updates = Object.keys(req.body);
 
+   
     const isValidOperation = updates.every((key) => allowedUpdates.includes(key));
     if (!isValidOperation) {
       return res.status(400).json({
@@ -82,19 +84,25 @@ const updateRecipe = async (req, res) => {
       });
     }
 
-    
+   
     if (updates.length === 0 && !req.file) {
       return res.status(400).json({ message: "No valid fields provided for update." });
     }
 
-    
-    Object.assign(recipe, req.body);
-
+ 
     if (req.file) {
-      recipe.image = req.file.path; 
+      recipe.image = {
+        data: req.file.buffer, 
+        contentType: req.file.mimetype, 
+      };
     }
 
     
+    for (const key of updates) {
+      recipe[key] = req.body[key];
+    }
+
+   
     await recipe.save();
 
     
@@ -103,6 +111,8 @@ const updateRecipe = async (req, res) => {
     return res.status(500).json({ message: "Error updating recipe", error: error.message });
   }
 };
+
+
 
 // Get recipe  ID
 
